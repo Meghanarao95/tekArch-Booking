@@ -6,7 +6,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
+import org.springframework.beans.factory.annotation.Value;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,13 +17,14 @@ public class TafBookingService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private final String BASE_URL = "http://localhost:9200/datastore";
+    @Value("${datastore.url}")
+    private String BASE_URL;
 
     // Create a booking
     public Bookings createBooking(Long userId, Long flightId) {
         String url = BASE_URL + "/bookings/" + userId + "/" + flightId;
 
-        ResponseEntity<Bookings> response = restTemplate.exchange(url,
+        ResponseEntity<Bookings> response = restTemplate.exchange(URI.create(url),
                 org.springframework.http.HttpMethod.POST,
                 null,
                 Bookings.class);
@@ -34,7 +36,7 @@ public class TafBookingService {
     public Optional<Bookings> getBookingById(Long bookingId) {
         String url = BASE_URL + "/bookings/" + bookingId;
 
-        ResponseEntity<Bookings> response = restTemplate.exchange(url,
+        ResponseEntity<Bookings> response = restTemplate.exchange(URI.create(url),
                 org.springframework.http.HttpMethod.GET,
                 null,
                 Bookings.class);
@@ -46,7 +48,7 @@ public class TafBookingService {
     public List<Bookings> getBookingsByUser(Long userId) {
         String url = BASE_URL + "/bookings/user/" + userId;
 
-        ResponseEntity<List<Bookings>> response = restTemplate.exchange(url,
+        ResponseEntity<List<Bookings>> response = restTemplate.exchange(URI.create(url),
                 org.springframework.http.HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<Bookings>>() {});
@@ -58,7 +60,7 @@ public class TafBookingService {
     public Bookings cancelBooking(Long bookingId) {
         String url = BASE_URL + "/bookings/" + bookingId;
 
-        ResponseEntity<Bookings> response = restTemplate.exchange(url,
+        ResponseEntity<Bookings> response = restTemplate.exchange(URI.create(url),
                 org.springframework.http.HttpMethod.DELETE,
                 null,
                 Bookings.class);
